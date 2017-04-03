@@ -155,8 +155,21 @@ viewSquares model =
     in
         Html.div
             []
-            [ Html.div [ style ] ( drawSquares model 1 []) ]
+            [ Html.div [ style ] ( drawSquares model 1 [])
+                , Html.br [] []
+            ]
 
+
+viewSquaresItens : List Item -> Html Msg
+viewSquaresItens itens =
+    Html.div
+        []
+        (List.map viewSquares (List.map itemToOrcamento itens))
+
+
+itemToOrcamento : Item -> Orcamento
+itemToOrcamento item =
+    Orcamento (item.valor // 50) 50
 
 view : Model -> Html Msg
 view model =
@@ -165,7 +178,9 @@ view model =
         [ viewDados model
             , viewItens model.itens
             , viewFormItem model.form
-            , viewSquares { blocos = model.squares, valor = model.precision }
+            , viewSquares (Orcamento model.squares model.precision)
+            --, viewSquares { blocos = model.squares, valor = model.precision }
+            , viewSquaresItens model.itens
             , model |> toString |> text
         ]
 
