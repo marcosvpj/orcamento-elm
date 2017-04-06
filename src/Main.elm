@@ -5,6 +5,7 @@ import Html.Attributes exposing (class, placeholder)
 import Html.Events exposing (onInput, onClick, onSubmit)
 
 
+main : Program Never Model Msg
 main =
     Html.beginnerProgram { model = model, view = view, update = update }
 
@@ -18,6 +19,7 @@ main =
 type alias Item =
     { item : String
     , valor : Int
+    , precisao : Int
     }
 
 
@@ -38,7 +40,7 @@ type alias Model =
 
 form : Item
 form =
-    Item "" 0
+    Item "" 0 1
 
 
 model : Model
@@ -74,7 +76,7 @@ update msg model =
                 novosItens =
                     List.append model.itens [ p ]
             in
-                { model | itens = novosItens, form = Item "" 0 }
+                { model | itens = novosItens, form = Item "" 0 1 }
 
         UpdateItem p ->
             let
@@ -116,17 +118,14 @@ drawSquare squareValue =
     let
         style =
             Html.Attributes.style
-                [ ( "display", "inline-block" )
-                , ( "width", "1.5em" )
-                , ( "height", "1.5em" )
-                , ( "line-height", "1.5em" )
-                , ( "margin", "2px" )
+                [ ( "float", "left" )
+                , ( "width", "5px" )
+                , ( "height", "5px" )
+                , ( "margin", "1px" )
                 , ( "background-color", "#c44" )
-                , ( "text-align", "center" )
-                , ( "font-family", "monospace" )
                 ]
     in
-        Html.div [ Html.Attributes.class "square", style ] [ Html.text (toString squareValue) ]
+        Html.div [ Html.Attributes.class "square", style ] []
 
 
 viewFormItem : Item -> Html Msg
@@ -191,12 +190,20 @@ viewSquares : Orcamento -> Html Msg
 viewSquares model =
     let
         style =
-            Html.Attributes.style [ ( "width", "500px" ) ]
+            Html.Attributes.style
+                [ ( "width", "90%" )
+                , ( "margin", "5px auto" )
+                ]
+
+        styleBr =
+            Html.Attributes.style
+                [ ( "clear", "both" )
+                ]
     in
         Html.div
             []
             [ Html.div [ style ] (drawSquares model 1 [])
-            , Html.br [] []
+            , Html.br [ styleBr ] []
             ]
 
 
@@ -209,7 +216,7 @@ viewSquaresItens itens =
 
 itemToOrcamento : Item -> Orcamento
 itemToOrcamento item =
-    Orcamento (item.valor // 50) 50
+    Orcamento (item.valor // item.precisao) item.precisao
 
 
 view : Model -> Html Msg
